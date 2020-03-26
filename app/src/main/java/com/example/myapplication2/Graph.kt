@@ -10,7 +10,7 @@ import android.view.View
 import kotlin.math.abs
 
 class Graph(context: Context): View(context) {
-
+    var isSym = false
     val wid = 720F
     val hei = 1124F
     val upper = wid/2 to 75F
@@ -19,7 +19,8 @@ class Graph(context: Context): View(context) {
     val points = generatePoints(10)
     val symmetricMatrix = MyMatrix.generateMatrix(9304, 10).symmetric()
     val asymmetricMatrix = MyMatrix.generateMatrix(9304, 10)
-    val greph = generateGraph(asymmetricMatrix)
+    val greph = generateGraph(symmetricMatrix)
+
 
     inner class Vertex(val num: Int, val neighbours: List<Int>, val coordinates: Pair<Float, Float>) {
         fun countInner(): Int {
@@ -30,6 +31,7 @@ class Graph(context: Context): View(context) {
             return res
         }
         fun countOuter() = this.neighbours.reduce { acc, i -> acc + i }
+        fun symTotal() = this.outer + (if (this.neighbours[this.num] == 1) 1 else 0)
         val outer by lazy { this.countOuter() }
         val inter by lazy { this.countInner() }
         val total by lazy { this.inter + this.outer }
@@ -40,6 +42,20 @@ class Graph(context: Context): View(context) {
         val sb = StringBuilder()
         for (vert in greph){
             sb.append("""${vert.num+1} Вхідні: ${vert.inter} Вихідні: ${vert.outer} Загально: ${vert.total}
+                |
+            """.trimMargin()
+            )
+        }
+        sb.append("""Висячих:${this.countHanging()} Ізольованих:${this.countIsolated()}
+            |
+        """.trimMargin())
+        sb.append("Граф ${if (this.notEvenDegrees()) "неоднорідний" else "однорідний"}")
+        return sb.toString()
+    }
+    fun toSymStringDegrees(): String {
+        val sb = StringBuilder()
+        for (vert in greph){
+            sb.append("""${vert.num+1} Cтепінь: ${vert.symTotal()}
                 |
             """.trimMargin()
             )
@@ -101,7 +117,7 @@ class Graph(context: Context): View(context) {
             }
         }
         val points = generatePoints(10)
-        val graphs = generateGraph(MyMatrix.generateMatrix(9304, 10))
+        val graphs = generateGraph(MyMatrix.generateMatrix(9304, 10).symmetric().unOriented())
         connect(graphs)
         for ((x, y) in points){
             val i = points.indexOf(x to y)
@@ -112,6 +128,7 @@ class Graph(context: Context): View(context) {
     }
 
     fun generateGraph(matrix: MyMatrix): MutableList<Vertex> {
+        if (matrix.isSym) this.isSym = true
         val points = generatePoints(matrix.width)
         val vertexes = MutableList(matrix.width) {Vertex(0, listOf(0), 0F to 0F)}
         for (i in 0 until matrix.width) {

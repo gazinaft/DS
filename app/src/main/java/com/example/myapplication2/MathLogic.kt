@@ -1,9 +1,5 @@
 package com.example.myapplication2
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Path
 import kotlin.math.abs
-import kotlin.math.pow
 
 
 fun gY(p1: Pair<Float, Float>, p2: Pair<Float, Float>): (Float) -> Float {
@@ -48,4 +44,5 @@ fun scaleAnchor(center: Pair<Float, Float>, koef: Float, supportDot: Pair<Float,
     val dx = supportDot.first - center.first
     return (koef*dx) + center.first to  gY(center, supportDot)(center.first + (koef*dx))
 }
+
 

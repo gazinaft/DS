@@ -15,12 +15,12 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         val graph = Graph(this)
-        greph = graph.toStringDegrees()
+        greph = graph.toSymStringDegrees()
         graph.setOnClickListener { goToText(graph) }
         setContentView(graph)
     }
     fun goToText(view: View) {
-        val symMatrix = MyMatrix.generateMatrix(9304, 10)
+        val symMatrix = MyMatrix.generateMatrix(9304, 10).symmetric()
 
         val inten = Intent(this, MatrixActivity::class.java)
         inten.putExtra(MatrixActivity.MATRIX_STR, symMatrix.toString())

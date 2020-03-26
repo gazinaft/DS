@@ -6,6 +6,8 @@ import kotlin.random.Random
 
 data class MyMatrix (val width: Int) {
     private val skeleton: MutableList<MutableList<Int>> = MutableList(width) { MutableList(width) { 0 } }
+    var isSym = false
+
 
     operator fun set(row: Int, column: Int, value: Int) {
         skeleton[row][column] = value
@@ -65,7 +67,10 @@ data class MyMatrix (val width: Int) {
     }
 
 
-    fun symmetric(): MyMatrix = (this + transponate()).postSym()
+    fun symmetric(): MyMatrix {
+        this.isSym = true
+        return (this + transponate()).postSym()
+    }
 
     companion object {
         fun generateMatrix(seed: Int, width: Int): MyMatrix {
