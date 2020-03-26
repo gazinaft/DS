@@ -3,7 +3,9 @@
 package com.example.myapplication2
 
 import android.content.Context
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import android.view.View
 import kotlin.math.abs
 
@@ -15,10 +17,45 @@ class Graph(context: Context): View(context) {
     val bottomLeft = 75F to hei - 75F
     val bottomRight = wid - 75F to hei - 75F
     val points = generatePoints(10)
+    val symmetricMatrix = MyMatrix.generateMatrix(9304, 10).symmetric()
+    val asymmetricMatrix = MyMatrix.generateMatrix(9304, 10)
+    val greph = generateGraph(asymmetricMatrix)
 
-
-    inner class Vertex(val num: Int, val neighbours: List<Int>, val coordinates: Pair<Float, Float>)
-
+    inner class Vertex(val num: Int, val neighbours: List<Int>, val coordinates: Pair<Float, Float>) {
+        fun countInner(): Int {
+            var res = 0
+            for (vert in greph) {
+                if(vert.neighbours[this.num] == 1) res+=1
+            }
+            return res
+        }
+        fun countOuter() = this.neighbours.reduce { acc, i -> acc + i }
+        val outer by lazy { this.countOuter() }
+        val inter by lazy { this.countInner() }
+        val total by lazy { this.inter + this.outer }
+        val isolated by lazy { this.total == 0 }
+        val hanging by lazy { this.total == 1 }
+    }
+    fun toStringDegrees(): String {
+        val sb = StringBuilder()
+        for (vert in greph){
+            sb.append("""${vert.num+1} Вхідні: ${vert.inter} Вихідні: ${vert.outer} Загально: ${vert.total}
+                |
+            """.trimMargin()
+            )
+        }
+        sb.append("""Висячих:${this.countHanging()} Ізольованих:${this.countIsolated()}
+            |
+        """.trimMargin())
+        sb.append("Граф ${if (this.notEvenDegrees()) "неоднорідний" else "однорідний"}")
+        return sb.toString()
+    }
+    fun countHanging() = greph.count{ it.hanging }
+    fun countIsolated() = greph.count{ it.isolated }
+    fun notEvenDegrees(): Boolean {
+        val first = greph[0].total
+        return greph.any { it.total!= first }
+    }
     override fun onDraw(canvas: Canvas?) {
         val p = Paint()
         val b = Paint()
@@ -31,7 +68,7 @@ class Graph(context: Context): View(context) {
         cy.style = Paint.Style.STROKE
         cy.color = Color.RED
         val verticalPoints = generatePoints(10)
-        fun loop(vertex: Vertex) {
+        fun loop(vertex: Graph.Vertex) {
             val first = vertex.coordinates.first
             val second = vertex.coordinates.second
             canvas?.drawArc( first - 50F, second - 90F, first + 50F, second, 135F, 270F, false, b)
@@ -64,7 +101,7 @@ class Graph(context: Context): View(context) {
             }
         }
         val points = generatePoints(10)
-        val graphs = generateGraph(MyMatrix.generateMatrix(9304, 10).symmetric().unOriented())
+        val graphs = generateGraph(MyMatrix.generateMatrix(9304, 10))
         connect(graphs)
         for ((x, y) in points){
             val i = points.indexOf(x to y)
@@ -82,6 +119,7 @@ class Graph(context: Context): View(context) {
         }
         return vertexes
     }
+
 
     fun generatePoints(quan: Int): MutableList<Pair<Float, Float>> {
         if (quan < 3) throw Error("Too little arguments")

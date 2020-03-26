@@ -1,20 +1,12 @@
 package com.example.myapplication2
 
-import android.annotation.SuppressLint
-import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
-import kotlinx.android.synthetic.main.activity_main.*
+import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
-
+    var greph: String = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -22,6 +14,17 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        setContentView(Graph(this))
+        val graph = Graph(this)
+        greph = graph.toStringDegrees()
+        graph.setOnClickListener { goToText(graph) }
+        setContentView(graph)
+    }
+    fun goToText(view: View) {
+        val symMatrix = MyMatrix.generateMatrix(9304, 10)
+
+        val inten = Intent(this, MatrixActivity::class.java)
+        inten.putExtra(MatrixActivity.MATRIX_STR, symMatrix.toString())
+        inten.putExtra(MatrixActivity.DEGREES, greph)
+        startActivity(inten)
     }
 }
