@@ -19,8 +19,9 @@ class Graph(context: Context): View(context) {
     val points = generatePoints(10)
     val symmetricMatrix = MyMatrix.generateMatrix(9304, 10).symmetric()
     val asymmetricMatrix = MyMatrix.generateMatrix(9304, 10)
-    val greph = generateGraph(symmetricMatrix)
-
+    var greph = generateGraph(symmetricMatrix)
+    val degrees by lazy {if (this.isSym) this.toSymStringDegrees() else this.toStringDegrees()}
+    lateinit var rootMatrix: MyMatrix
 
     inner class Vertex(val num: Int, val neighbours: List<Int>, val coordinates: Pair<Float, Float>) {
         fun countInner(): Int {
@@ -83,7 +84,6 @@ class Graph(context: Context): View(context) {
         p.strokeWidth = 10F
         cy.style = Paint.Style.STROKE
         cy.color = Color.RED
-        val verticalPoints = generatePoints(10)
         fun loop(vertex: Graph.Vertex) {
             val first = vertex.coordinates.first
             val second = vertex.coordinates.second
@@ -91,10 +91,7 @@ class Graph(context: Context): View(context) {
         }
 
         fun interconnect(point1: Pair<Float, Float>, point2: Pair<Float, Float>, paint: Paint = cy) {
-            val x1 = point1.first
-            val y1 = point1.second
-            val x2 = point2.first
-            val y2 = point2.second
+
             if (!collide(point1, point2, points)) {
                 canvas?.drawLine(point1.first, point1.second, point2.first, point2.second, paint)
             }
@@ -117,7 +114,7 @@ class Graph(context: Context): View(context) {
             }
         }
         val points = generatePoints(10)
-        val graphs = generateGraph(MyMatrix.generateMatrix(9304, 10).symmetric().unOriented())
+        val graphs = if (isSym) generateGraph(symmetricMatrix.unOriented()) else greph
         connect(graphs)
         for ((x, y) in points){
             val i = points.indexOf(x to y)
@@ -126,7 +123,18 @@ class Graph(context: Context): View(context) {
         }
 
     }
-
+    fun setSymmetricity(boolean: Boolean) {
+        if (boolean) {
+            this.rootMatrix = symmetricMatrix
+            this.greph = generateGraph(symmetricMatrix)
+            this.isSym = true
+        }
+        else {
+            this.rootMatrix = asymmetricMatrix
+            this.greph = generateGraph(asymmetricMatrix)
+            this.isSym = false
+        }
+    }
     fun generateGraph(matrix: MyMatrix): MutableList<Vertex> {
         if (matrix.isSym) this.isSym = true
         val points = generatePoints(matrix.width)

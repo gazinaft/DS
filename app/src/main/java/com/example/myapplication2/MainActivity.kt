@@ -6,7 +6,9 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
-    var greph: String = ""
+    lateinit var graph: Graph
+    lateinit var greph: String
+    lateinit var matrix: MyMatrix
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -14,16 +16,16 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        val graph = Graph(this)
-        greph = graph.toSymStringDegrees()
+        graph = Graph(this)
+        graph.setSymmetricity(false)
+        greph = graph.degrees
         graph.setOnClickListener { goToText(graph) }
         setContentView(graph)
     }
     fun goToText(view: View) {
-        val symMatrix = MyMatrix.generateMatrix(9304, 10).symmetric()
-
+        matrix = graph.rootMatrix
         val inten = Intent(this, MatrixActivity::class.java)
-        inten.putExtra(MatrixActivity.MATRIX_STR, symMatrix.toString())
+        inten.putExtra(MatrixActivity.MATRIX_STR, matrix.toString())
         inten.putExtra(MatrixActivity.DEGREES, greph)
         startActivity(inten)
     }

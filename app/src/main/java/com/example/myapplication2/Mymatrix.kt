@@ -37,6 +37,7 @@ data class MyMatrix (val width: Int) {
         }
         return copy
     }
+    fun copy() = this.transponate().transponate()
 
     override fun toString(): String {
         val res = StringBuilder()
@@ -50,12 +51,13 @@ data class MyMatrix (val width: Int) {
         return res.toString()
     }
     fun unOriented(): MyMatrix {
+        val copy = this.copy()
         for (i in this.skeleton.indices) {
             for (j in this.skeleton.indices){
-                if (j > i) this[i, j] = 0
+                if (j > i) copy[i, j] = 0
             }
         }
-        return this
+        return copy
     }
 
     private fun postSym(): MyMatrix {
