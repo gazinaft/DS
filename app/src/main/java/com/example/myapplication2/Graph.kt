@@ -33,6 +33,7 @@ class Graph(context: Context): View(context) {
         }
         fun countOuter() = this.neighbours.reduce { acc, i -> acc + i }
         fun symTotal() = this.outer + (if (this.neighbours[this.num] == 1) 1 else 0)
+
         val outer by lazy { this.countOuter() }
         val inter by lazy { this.countInner() }
         val total by lazy { this.inter + this.outer }

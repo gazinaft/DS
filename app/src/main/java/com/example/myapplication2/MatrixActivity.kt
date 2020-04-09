@@ -1,6 +1,9 @@
 package com.example.myapplication2
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_matrix.*
 
@@ -19,5 +22,36 @@ class MatrixActivity : AppCompatActivity() {
         val degrees = intent.getStringExtra(DEGREES)
         matrixTextView.text = matrix
         degreeTextView.text = degrees
+    }
+    fun goToCondensation(view: View) {
+        val going = Intent(this, CondGraphActivity::class.java)
+        startActivity(going)
+    }
+    fun showRoutes(view: View) {
+        val routes2 = MyMatrix.generateMatrix(9304, 10).findPath2()
+        val text = """Довжина2:
+            | $routes2
+            """.trimMargin()
+        val showing = Toast.makeText(this, text, Toast.LENGTH_LONG)
+        showing.show()
+    }
+    fun showMatrixes(view: View){
+        val matrix = MyMatrix.generateMatrix(9304, 10)
+        val myToast = Toast.makeText(this,
+            """Довжина 2:
+            |${matrix.power(2)}
+            |Довжина 3:
+            |${matrix.power(3)}
+        """.trimMargin(), Toast.LENGTH_LONG)
+        myToast.show()
+    }
+
+    fun showRoutes2(view: View) {
+        val routes3 = MyMatrix.generateMatrix(9304, 10).findPath3()
+        val text = """Довжина3:
+            | $routes3
+            """.trimMargin()
+        val showing = Toast.makeText(this, text, Toast.LENGTH_LONG)
+        showing.show()
     }
 }

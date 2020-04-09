@@ -1,5 +1,7 @@
 package com.example.myapplication2
 import kotlin.math.abs
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 
 fun gY(p1: Pair<Float, Float>, p2: Pair<Float, Float>): (Float) -> Float {
@@ -45,4 +47,27 @@ fun scaleAnchor(center: Pair<Float, Float>, koef: Float, supportDot: Pair<Float,
     return (koef*dx) + center.first to  gY(center, supportDot)(center.first + (koef*dx))
 }
 
+fun addArr(arr: MutableList<Int>, arr2: MutableList<Int>): MutableList<Int> {
+    val result = MutableList(arr.size){0}
+    for (i in arr.indices) {
+        result[i] = if (arr[i] + arr2[i] > 1) 1 else arr[i] + arr2[i]
+    }
+    return result
+}
 
+fun cirleCollision(k: Float, b: Float,x0: Float, y0: Float, radius: Float): List<Pair<Float, Float>>? {
+    val a = k.pow(2) + 1f
+    val bx = -2f * (x0 - (k*b) + (k*y0))
+    val c = x0.pow(2) + y0.pow(2) + b.pow(2) - radius.pow(2) - (2f * y0 * b)
+    val discr = bx.pow(2) - (4f * a * c)
+    if (discr < 0) return null
+    val x1 = (-bx + sqrt(discr))/ 2f / a
+    val x2 = (-bx - sqrt(discr))/ 2f / a
+    return listOf<Pair<Float, Float>>(x1 to (x1*k) + b, x2 to (x2 * k) + b)
+}
+
+fun convertToKX(p1: Pair<Float, Float>, p2: Pair<Float, Float>) {
+
+}
+
+fun nonZeroIndexes(arr: List<Int>) = arr.withIndex().filter { it.value!=0 }.map { it.index }

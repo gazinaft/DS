@@ -10,12 +10,13 @@
         android:id="@+id/matrixTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:onClick="goToCondensation"
         android:text="TextView"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.213" />
+        app:layout_constraintVertical_bias="0.129" />
 
     <TextView
         android:id="@+id/degreeTextView"
@@ -25,5 +26,42 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/matrixTextView"
+        app:layout_constraintVertical_bias="0.663" />
+
+    <Button
+        android:id="@+id/routesButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="showRoutes"
+        android:text="Шляхи2"
+        app:layout_constraintBottom_toTopOf="@+id/degreeTextView"
+        app:layout_constraintEnd_toStartOf="@+id/matrixTextView"
+        app:layout_constraintHorizontal_bias="0.363"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/matrixTextView"
+        app:layout_constraintVertical_bias="0.498" />
+
+    <Button
+        android:id="@+id/matrixButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="showMatrixes"
+        android:text="Матриці 2 і 3"
+        app:layout_constraintBottom_toTopOf="@+id/degreeTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/matrixTextView"
+        app:layout_constraintTop_toBottomOf="@+id/matrixTextView" />
+
+    <Button
+        android:id="@+id/routesLongButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="showRoutes2"
+        android:text="Шляхи3"
+        app:layout_constraintBottom_toTopOf="@+id/degreeTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.151"
+        app:layout_constraintStart_toEndOf="@+id/routesButton"
         app:layout_constraintTop_toBottomOf="@+id/matrixTextView" />
 </androidx.constraintlayout.widget.ConstraintLayout>
