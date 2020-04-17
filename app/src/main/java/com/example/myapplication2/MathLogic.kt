@@ -66,8 +66,21 @@ fun cirleCollision(k: Float, b: Float,x0: Float, y0: Float, radius: Float): List
     return listOf<Pair<Float, Float>>(x1 to (x1*k) + b, x2 to (x2 * k) + b)
 }
 
-fun convertToKX(p1: Pair<Float, Float>, p2: Pair<Float, Float>) {
+fun convertToKX(p1: Pair<Float, Float>, p2: Pair<Float, Float>): Pair<Float, Float> {
+    val (x1, y1) = p1
+    val (x2, y2) = p2
+    val k = (y2-y1)/(x2-x1)
+    val b = -k*x1 + y1
+    return k to b
+}
 
+fun closestPoint(pointF: Pair<Float, Float>, list: List<Pair<Float, Float>>?): Pair<Float, Float>? {
+    if (list.isNullOrEmpty()) return null
+    if (list[0] == list[1]) return list.first()
+    val (dx1, dy1) = list[0].first-pointF.first to list[0].second-pointF.second
+    val (dx2, dy2) = list[1].first-pointF.first to list[1].second-pointF.second
+    return if (dx1.pow(2)+dy1.pow(2) < dx2.pow(2) + dy2.pow(2)) list[0] else list[1]
 }
 
 fun nonZeroIndexes(arr: List<Int>) = arr.withIndex().filter { it.value!=0 }.map { it.index }
+

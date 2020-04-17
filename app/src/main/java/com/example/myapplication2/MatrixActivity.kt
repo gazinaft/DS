@@ -27,14 +27,7 @@ class MatrixActivity : AppCompatActivity() {
         val going = Intent(this, CondGraphActivity::class.java)
         startActivity(going)
     }
-    fun showRoutes(view: View) {
-        val routes2 = MyMatrix.generateMatrix(9304, 10).findPath2()
-        val text = """Довжина2:
-            | $routes2
-            """.trimMargin()
-        val showing = Toast.makeText(this, text, Toast.LENGTH_LONG)
-        showing.show()
-    }
+
     fun showMatrixes(view: View){
         val matrix = MyMatrix.generateMatrix(9304, 10)
         val myToast = Toast.makeText(this,
