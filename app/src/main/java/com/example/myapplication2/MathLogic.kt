@@ -1,4 +1,7 @@
 package com.example.myapplication2
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Path
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -73,6 +76,13 @@ fun convertToKX(p1: Pair<Float, Float>, p2: Pair<Float, Float>): Pair<Float, Flo
     val b = -k*x1 + y1
     return k to b
 }
+fun convertToPerpendKX(p1: Pair<Float, Float>, p2: Pair<Float, Float>): Pair<Float, Float> {
+    val (x1, y1) = p1
+    val (x2, y2) = p2
+    val k = - (x2 - x1) / (y2 - y1)
+    val b = y2 - k * x2
+    return k to b
+}
 
 fun closestPoint(pointF: Pair<Float, Float>, list: List<Pair<Float, Float>>?): Pair<Float, Float>? {
     if (list.isNullOrEmpty()) return null
@@ -81,6 +91,36 @@ fun closestPoint(pointF: Pair<Float, Float>, list: List<Pair<Float, Float>>?): P
     val (dx2, dy2) = list[1].first-pointF.first to list[1].second-pointF.second
     return if (dx1.pow(2)+dy1.pow(2) < dx2.pow(2) + dy2.pow(2)) list[0] else list[1]
 }
+
+fun drawArrow(p: Paint, canvas: Canvas?, pointF: Pair<Float, Float>, crossPoint: Pair<Float, Float>) {
+    val arrowWidth = 4f
+    val arrowHeight = 10f
+    val (kL, bL) = convertToKX(pointF, crossPoint)
+    val midPointF =
+        closestPoint(pointF, cirleCollision(kL, bL, crossPoint.first, crossPoint.second, arrowHeight))
+            ?: return
+    val (kP, bP) = convertToPerpendKX(pointF, midPointF)
+    val drawPoints = cirleCollision(kP, bP, midPointF.first, midPointF.second, arrowWidth)
+        ?: return
+    val path = Path()
+    path.moveTo(crossPoint.first, crossPoint.second)
+    drawPoints.forEach{
+        path.lineTo(it.first, it.second)
+    }
+    path.lineTo(crossPoint.first, crossPoint.second)
+    canvas?.drawPath(path, p)
+}
+
+fun drawFinal(p: Paint, p1: Pair<Float, Float>, p2: Pair<Float, Float>, canvas: Canvas?) {
+    val radius = 50f
+    val (x1, y1) = p1
+    val (x2, y2) = p2
+    canvas?.drawLine(x1, y1, x2, y2, p)
+    val (kL, bL) = convertToKX(p1, p2)
+    val midPoint =  closestPoint(p1, cirleCollision(kL, bL, x2, y2, radius)) ?: return
+    drawArrow(p, canvas, p1, midPoint)
+}
+
 
 fun nonZeroIndexes(arr: List<Int>) = arr.withIndex().filter { it.value!=0 }.map { it.index }
 
