@@ -1,11 +1,26 @@
 package com.example.myapplication2
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sqrt
 
+
+val wid = 720F
+val hei = 1124F
+val upper = wid/2 to 75F
+val bottomLeft = 75F to hei - 75F
+val bottomRight = wid - 75F to hei - 75F
+val points = generatePoints(10)
+
+
+
+
+enum class Status {
+    NEW, PASSED, CLOSED
+}
 
 fun gY(p1: Pair<Float, Float>, p2: Pair<Float, Float>): (Float) -> Float {
     return {x: Float ->  (x - p1.first)*(p2.second-p1.second)/(p2.first-p1.first) + p1.second}
@@ -44,10 +59,6 @@ fun makeAnchorPoint(start: Pair<Float, Float>, end: Pair<Float, Float>): Pair<Fl
         dy < 0F -> return xs - 80F to perpendicular(xs - 80F)
     }
     return 360F to 526F
-}
-fun scaleAnchor(center: Pair<Float, Float>, koef: Float, supportDot: Pair<Float, Float>): Pair<Float, Float> {
-    val dx = supportDot.first - center.first
-    return (koef*dx) + center.first to  gY(center, supportDot)(center.first + (koef*dx))
 }
 
 fun addArr(arr: MutableList<Int>, arr2: MutableList<Int>): MutableList<Int> {
@@ -121,6 +132,122 @@ fun drawFinal(p: Paint, p1: Pair<Float, Float>, p2: Pair<Float, Float>, canvas: 
     drawArrow(p, canvas, p1, midPoint)
 }
 
+fun plainAncor(p1: Pair<Float, Float>, p2: Pair<Float, Float>): Pair<Float, Float>? {
+    val distance = 5f
+    val (x1, y1) = p1
+    val (x2, y2) = p2
+    val (xc, yc) = (x1 + x2)/2 to (y1 + y2)/2
+    if (x2-x1 == 0f) return (if (y2-y1 > 0f) x1 + distance else x1 - distance)  to yc
+    if (y2 - y1 == 0f) return  xc to (if (x2 - x1 > 0f) y1 - distance else y1 + distance)
+    val (kL, bL) = convertToPerpendKX(p1, xc to yc)
+    val points = cirleCollision(kL, bL, xc, yc, distance)
+    return if (y2 - y1 > 0f) points?.minBy { it.first } else points?.maxBy { it.first }
+}
+
+fun drawPlain(p1: Pair<Float, Float>, midPoint: Pair<Float, Float>?, p2: Pair<Float, Float>, canvas: Canvas?, p: Paint) {
+    if (midPoint == null) return
+    canvas?.drawLine(p1.first, p1.second, midPoint.first, midPoint.second, p)
+    drawFinal(p, midPoint, p2, canvas)
+}
 
 fun nonZeroIndexes(arr: List<Int>) = arr.withIndex().filter { it.value!=0 }.map { it.index }
 
+
+fun generatePoints(quan: Int): MutableList<Pair<Float, Float>> {
+    if (quan < 3) throw Error("Too little arguments")
+    val result = MutableList(quan){ Pair(0F, 0F)}
+    result[0] = bottomLeft
+
+    when {
+        quan % 2 == 0 -> {
+            result[quan - 1] = wid/2 to bottomLeft.second
+            result[quan - 2] = bottomRight
+        }
+        quan % 2 != 0 -> {
+            result[quan - 1] = (wid - 150F)/3 + bottomLeft.first to bottomLeft.second
+            result[quan - 2] = 2*(wid - 150F)/3 + bottomLeft.first to bottomLeft.second
+            result[quan - 3] = bottomRight
+        }
+    }
+
+    val middle = if (quan % 2 == 0 ) (quan / 2) - 1
+    else (quan - 1)/2 - 1
+
+    result[middle] = upper
+    for (i in 1 until middle) {
+        val x = bottomLeft.first + i * abs(bottomLeft.first - upper.first)/(middle)
+        result[i] = x to gY(upper, bottomLeft)(x)
+    }
+    for (i in middle+1 until (middle*2)) {
+        val x = upper.first + (i - middle) * abs(bottomRight.first - upper.first)/(middle)
+        result[i] = x to gY(upper, bottomRight)(x)
+    }
+    return result
+}
+
+
+fun loop(vertex: Graph.Vertex, canvas: Canvas?, b: Paint) {
+    val first = vertex.coordinates.first
+    val second = vertex.coordinates.second
+    canvas?.drawArc( first - 50F, second - 90F, first + 50F, second, 135F, 270F, false, b)
+}
+fun interconnect(point1: Pair<Float, Float>, point2: Pair<Float, Float>, canvas: Canvas?, p: Paint, b: Paint) {
+
+    if (!collide(point1, point2, points)) {
+        //drawFinal(cy, point1, point2,canvas)
+        val (kx, bx) = convertToKX(point1, point2)
+        val p1 = closestPoint(point2, cirleCollision(kx, bx, point1.first, point1.second, 50f))!!
+        drawPlain(p1, plainAncor(point1, point2), point2, canvas, p)
+    }
+    else {
+        val midDot = makeAnchorPoint(point1, point2)
+        val (kx, bx) = convertToKX(point1, midDot)
+        val p1 = closestPoint(midDot, cirleCollision(kx, bx, point1.first, point1.second, 50f))!!
+        canvas?.drawLine(p1.first, p1.second ,midDot.first, midDot.second ,b)
+        drawFinal(b, midDot, point2, canvas)
+    }
+}
+fun drawPoints(list: List<Graph.Vertex>, radius: Float, canvas: Canvas?, p: Paint) {
+    p.textSize = 18f
+    for (index in list.indices) {
+        val vert = list[index]
+        val (x, y) = vert.coordinates
+        val i = vert.num
+        //canvas?.drawText("${list[index].calculateChildren().map { it.num }}", x, y, p.apply { color = Color.BLACK })
+        if (list[index].bfsOrder != 0) {
+            if (vert.parent?.coordinates != null) {
+                interconnect(vert!!.parent!!.coordinates, vert.coordinates, canvas,
+                    p.apply {
+                        strokeWidth = 7f
+                        color = Color.rgb(20, 23, 60)
+                    },
+                    p.apply {
+                        strokeWidth = 7f
+                        color = Color.rgb(160, 141, 81)
+                    }
+                )
+            }
+            p.color = when (vert.status) {
+                Status.NEW -> Color.LTGRAY
+                Status.CLOSED -> Color.rgb(0, 87, 75)
+                Status.PASSED -> Color.rgb(0, 133, 119)
+            }
+            canvas?.drawCircle(x, y, radius, p)
+            canvas?.drawText("${i + 1}", x, y, p.apply { color = Color.BLACK })
+            canvas?.drawCircle(x + 40, y, 20f, p.apply { color = Color.rgb(160, 141, 81) })
+            canvas?.drawText(
+                "${list[index].bfsOrder}",
+                x + 36,
+                y + 4,
+                p.apply { color = Color.BLACK })
+        } else {
+            p.color = when (vert.status) {
+                Status.NEW -> Color.LTGRAY
+                Status.CLOSED -> Color.rgb(0, 87, 75)
+                Status.PASSED -> Color.rgb(0, 133, 119)
+        }
+        canvas?.drawCircle(x, y, radius, p)
+        canvas?.drawText("${i + 1}", x, y, p.apply { color = Color.BLACK })
+        }
+    }
+}
