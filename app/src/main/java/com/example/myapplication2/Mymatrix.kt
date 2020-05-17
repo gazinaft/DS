@@ -5,7 +5,7 @@ import kotlin.random.Random
 
 
 data class MyMatrix (val width: Int) {
-    private var skeleton: MutableList<MutableList<Int>> = MutableList(width) { MutableList(width) { 0 } }
+    var skeleton: MutableList<MutableList<Int>> = MutableList(width) { MutableList(width) { 0 } }
     var isSym = false
     val copy by lazy { this.copy() }
     val access by lazy { this.transClosure() }
@@ -65,14 +65,13 @@ data class MyMatrix (val width: Int) {
         val res = StringBuilder()
         for (i in this.skeleton.indices) {
             res.append(
-                """${this.skeleton[i]}
+                """${this.skeleton[i].joinToString(separator = " ", prefix = "[", postfix = "]")}
                 |
             """.trimMargin()
             )
         }
         return res.toString()
     }
-
 
     fun unOriented(): MyMatrix {
         val copy = this.copy()
@@ -91,7 +90,14 @@ data class MyMatrix (val width: Int) {
         }
         return this
     }
-
+    fun sym2(): MyMatrix {
+        val a = this + this.transponate()
+        for (i in a.skeleton.indices){
+            for (j in skeleton.indices)
+                if (i == j) a[i, j] = a[i,j]/2
+        }
+        return a
+    }
 
     fun symmetric(): MyMatrix {
         this.isSym = true
@@ -117,10 +123,10 @@ data class MyMatrix (val width: Int) {
 
 
     fun power(n: Int): MyMatrix {
-        when (n) {
-            1 -> return this.copy
-            2 -> return this.copy.compose(this.copy)
-            else -> return this.copy.compose(this.copy.power(n-1))
+        return when (n) {
+            1 -> this.copy
+            2 -> this.copy.compose(this.copy)
+            else -> this.copy.compose(this.copy.power(n-1))
         }
     }
 
@@ -171,15 +177,57 @@ data class MyMatrix (val width: Int) {
 
 
     companion object {
-        fun generateMatrix(seed: Int, width: Int): MyMatrix {
+        fun generateMatrix(seed: Int = 9304, width: Int = 10): MyMatrix {
             val res = MyMatrix(width)
             val rand = Random(seed)
             for (i in 0 until width) {
                 for (j in 0 until width) {
-                    res[i, j] = rand.nextInt(0, 2)
+                    res[i, j] = kotlin.math.floor(rand.nextDouble(2.0)*(1.0 - N3*0.01 - N4*0.005 - 0.05)).toInt()
                 }
             }
             return res
         }
+        //generates the triangle matrix
+        //0 0 0 0
+        //1 0 0 0
+        //1 1 0 0
+        //1 1 1 0
+        fun lowerTriangle(seed: Int = 9304, width: Int = 10): MyMatrix {
+            val res = MyMatrix(width)
+            for (i in 0 until width) {
+                for (j in 0 until width) {
+                    if (j > i - 1) {
+                        continue
+                    }
+                    res[i, j] = 1
+                }
+            }
+            return res
+        }
+        //Generates wages
+        fun generateWages(seed: Int = 9304, width: Int = 10): MyMatrix {
+            //unoriented matrix of connections
+            val start = generateMatrix(seed, width).symmetric()
+            //resulting matrix
+            val wt = MyMatrix(width)
+            val booleans = MutableList(width) { MutableList(width) {false} }
+            val rand = Random(seed)
+            val triangle = lowerTriangle()
+
+
+            for (i in 0 until width){
+                for (j in 0 until width) {
+                    wt[i, j] = start[i, j] * (rand.nextDouble() * 100.0).toInt()
+                    booleans[i][j] = wt[i, j] != 0
+                }
+            }
+            for (i in 0 until width) {
+                for (j in 0 until width) {
+                    wt[i, j] = (if (booleans[i][j] && !booleans[j][i] || booleans[i][j] && booleans[j][i]) 1 else 0) * triangle[i, j] * wt[i, j]
+                }
+            }
+            return wt + wt.transponate()
+        }
     }
 }
+

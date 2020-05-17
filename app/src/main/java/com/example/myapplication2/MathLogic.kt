@@ -8,14 +8,15 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 
 
-val wid = 720F
-val hei = 1124F
+const val wid = 720F
+const val hei = 1124F
 val upper = wid/2 to 75F
 val bottomLeft = 75F to hei - 75F
 val bottomRight = wid - 75F to hei - 75F
 val points = generatePoints(10)
-
-
+const val N3 = 0.0
+const val N4 = 4.0
+const val RADIUS = 20f
 
 
 enum class Status {
@@ -25,6 +26,19 @@ enum class Status {
 fun gY(p1: Pair<Float, Float>, p2: Pair<Float, Float>): (Float) -> Float {
     return {x: Float ->  (x - p1.first)*(p2.second-p1.second)/(p2.first-p1.first) + p1.second}
 }
+
+fun numeration(): String = """
+    |1
+    |2
+    |3
+    |4
+    |5
+    |6
+    |7
+    |8
+    |9
+    |10
+""".trimMargin()
 
 fun gX(p1: Pair<Float, Float>, p2: Pair<Float, Float>): (Float) -> Float {
     return { y: Float -> (y - p1.second)/(p2.second - p1.second)*(p2.first - p1.first) + p1.first }
@@ -126,10 +140,11 @@ fun drawFinal(p: Paint, p1: Pair<Float, Float>, p2: Pair<Float, Float>, canvas: 
     val radius = 50f
     val (x1, y1) = p1
     val (x2, y2) = p2
-    canvas?.drawLine(x1, y1, x2, y2, p)
+    //canvas?.drawLine(x1, y1, x2, y2, p)
     val (kL, bL) = convertToKX(p1, p2)
     val midPoint =  closestPoint(p1, cirleCollision(kL, bL, x2, y2, radius)) ?: return
-    drawArrow(p, canvas, p1, midPoint)
+    canvas?.drawLine(x1, y1, midPoint.first, midPoint.second, p)
+    //drawArrow(p, canvas, p1, midPoint)
 }
 
 fun plainAncor(p1: Pair<Float, Float>, p2: Pair<Float, Float>): Pair<Float, Float>? {
@@ -185,13 +200,15 @@ fun generatePoints(quan: Int): MutableList<Pair<Float, Float>> {
     return result
 }
 
-
+//draws a loop
 fun loop(vertex: Graph.Vertex, canvas: Canvas?, b: Paint) {
     val first = vertex.coordinates.first
     val second = vertex.coordinates.second
     canvas?.drawArc( first - 50F, second - 90F, first + 50F, second, 135F, 270F, false, b)
 }
-fun interconnect(point1: Pair<Float, Float>, point2: Pair<Float, Float>, canvas: Canvas?, p: Paint, b: Paint) {
+
+//connects 2 points depending on their position
+fun interconnect(point1: Pair<Float, Float>, point2: Pair<Float, Float>, canvas: Canvas?, p: Paint, b: Paint = p) {
 
     if (!collide(point1, point2, points)) {
         //drawFinal(cy, point1, point2,canvas)
@@ -207,16 +224,17 @@ fun interconnect(point1: Pair<Float, Float>, point2: Pair<Float, Float>, canvas:
         drawFinal(b, midDot, point2, canvas)
     }
 }
-fun drawPoints(list: List<Graph.Vertex>, radius: Float, canvas: Canvas?, p: Paint) {
+//the main drawing function
+fun drawPoints(list: List<Graph.Vertex>, radius: Float, canvas: Canvas?, p: Paint, edges: List<Graph.Edge>) {
     p.textSize = 18f
+//    canvas?.drawRGB(255, 255, 255)
     for (index in list.indices) {
         val vert = list[index]
         val (x, y) = vert.coordinates
         val i = vert.num
-        //canvas?.drawText("${list[index].calculateChildren().map { it.num }}", x, y, p.apply { color = Color.BLACK })
         if (list[index].bfsOrder != 0) {
             if (vert.parent?.coordinates != null) {
-                interconnect(vert!!.parent!!.coordinates, vert.coordinates, canvas,
+                interconnect(vert.parent!!.coordinates, vert.coordinates, canvas,
                     p.apply {
                         strokeWidth = 7f
                         color = Color.rgb(20, 23, 60)
@@ -245,9 +263,31 @@ fun drawPoints(list: List<Graph.Vertex>, radius: Float, canvas: Canvas?, p: Pain
                 Status.NEW -> Color.LTGRAY
                 Status.CLOSED -> Color.rgb(0, 87, 75)
                 Status.PASSED -> Color.rgb(0, 133, 119)
+            }
+
+            canvas?.drawCircle(x, y, radius, p)
+            canvas?.drawText("${i + 1}", x, y, p.apply { color = Color.BLACK })
         }
-        canvas?.drawCircle(x, y, radius, p)
-        canvas?.drawText("${i + 1}", x, y, p.apply { color = Color.BLACK })
+    }
+
+
+    //part responsible for drawing the Karaskal algorithm
+
+
+    for (i in edgesFin) {
+        interconnect(i.inter.coordinates, i.outer.coordinates, canvas, p.apply { strokeWidth = 7f; color = Color.RED }, p.apply { strokeWidth = 7f; color = Color.RED })
+        val point1 = i.inter.coordinates
+        val point2 = i.outer.coordinates
+        val (xc, yc) = plainAncor(point1, point2) ?: 0f to 0f
+        if (!collide(point1, point2, points)) {
+            canvas?.drawCircle(xc, yc, RADIUS, p.apply { color = Color.rgb(255, 140, 0) })
+            canvas?.drawText(i.length.toString(), xc - 3f, yc + 2f, p.apply { color = Color.BLACK })
+        }
+        else {
+            val midDot = makeAnchorPoint(point1, point2)
+            canvas?.drawCircle(midDot.first, midDot.second, RADIUS, p.apply { color = Color.rgb(255, 140, 0) })
+            canvas?.drawText(i.length.toString(), midDot.first - 3f, midDot.second + 2f, p.apply { color = Color.BLACK })
         }
     }
 }
+

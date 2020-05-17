@@ -15,44 +15,14 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.129" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/degreeTextView"
+        android:id="@+id/numetationView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/matrixTextView"
-        app:layout_constraintVertical_bias="0.663" />
-
-    <Button
-        android:id="@+id/routesButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="nextTick"
-        android:text="Обхід"
-        app:layout_constraintBottom_toTopOf="@+id/degreeTextView"
         app:layout_constraintEnd_toStartOf="@+id/matrixTextView"
-        app:layout_constraintHorizontal_bias="0.556"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/matrixTextView"
-        app:layout_constraintVertical_bias="0.498" />
-
-    <Button
-        android:id="@+id/matrixButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="showMatrixes"
-        android:text="Матриці 2 і 3"
-        app:layout_constraintBottom_toTopOf="@+id/degreeTextView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.224"
-        app:layout_constraintStart_toEndOf="@+id/matrixTextView"
-        app:layout_constraintTop_toBottomOf="@+id/matrixTextView"
-        app:layout_constraintVertical_bias="0.498" />
+        app:layout_constraintTop_toTopOf="@+id/matrixTextView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

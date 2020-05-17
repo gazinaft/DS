@@ -6,7 +6,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_matrix.*
-import kotlinx.coroutines.runBlocking
 
 class MatrixActivity : AppCompatActivity() {
     companion object {
@@ -19,30 +18,41 @@ class MatrixActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_matrix)
-        //showMatrix()
         graph = Graph(this)
+
         verts = graph.generateGraph(MyMatrix.generateMatrix(9304, 10))
         //degreeTextView.setOnClickListener { nextTick(degreeTextView) }
     }
-    fun showMatrix() {
-        val matrix = intent.getStringExtra(MATRIX_STR)
-        val degrees = intent.getStringExtra(DEGREES)
-        matrixTextView.text = matrix
-        degreeTextView.text = degrees
-    }
-    fun nextTick(view: View){
-        if (counter == 10) {
-            counter = 0
-        }
-        runBlocking {
-            verts[counter].refreshVert()
-            verts[counter].startBFS()
-            matrixTextView.text = verts[counter].bfsMatrix()
-            degreeTextView.text = "${counter+1} ${verts[counter].bfsStringify()}"
-            counter +=1
-       }
 
+    override fun onResume() {
+        super.onResume()
+        showMatrix()
     }
+    fun showMatrix() {
+        val matrix = MyMatrix.generateMatrix().symmetric()
+        val degrees = intent.getStringExtra(DEGREES)
+        //val matr = graph.getTreeMatrix(edgesFin)
+        //val wages = graph.getWagedTreeMatrix(edgesFin)
+        matrixTextView.text = matrix.toString()
+        //degreeTextView.text = wages.toString()
+        numetationView.text = numeration()
+    }
+    fun show6(view: View) {
+        val g = graph
+    }
+//    fun nextTick(view: View){
+//        if (counter == 10) {
+//            counter = 0
+//        }
+//        runBlocking {
+//            verts[counter].refreshVert()
+//            verts[counter].startBFS()
+//            matrixTextView.text = verts[counter].bfsMatrix()
+//                degreeTextView.text = "${counter+1} ${verts[counter].bfsStringify()}"
+//            counter +=1
+//       }
+//
+//    }
     fun goToCondensation(view: View) {
         val going = Intent(this, CondGraphActivity::class.java)
         startActivity(going)
@@ -67,4 +77,10 @@ class MatrixActivity : AppCompatActivity() {
         val showing = Toast.makeText(this, text, Toast.LENGTH_LONG)
         showing.show()
     }
+//    fun showEdges(view: View) {
+//        val a = graph.getConnections()
+//        val textView = findViewById<TextView>(R.id.degreeTextView)
+//        textView.text = a.toString()
+//        matrixTextView.text
+//    }
 }
