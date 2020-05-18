@@ -68,32 +68,37 @@ class Graph(context: Context): View(context) {
                 it.parent = null
             }
         }
+
+        // Beginning of 6th Lab assignment
+
+        //Calculates the route, which was used during Dijkstra algorithm
         fun calculatePath(): List<Int> = ((this.parent?.calculatePath() ?: mutableListOf<Int>()) + this.num)
+        //Calculates the distance to the root vertex
+        //In other words, the shortest distance from the beginning to this vertex
         fun getDistance(): Int = (this.parent?.getDistance() ?: 0) + ( (this.parent?.wages?.get(this.num)) ?: 0)
 
-        fun calculatePathLength(): Int {
-            val res = calculatePath().map { findByNum(it) }
-            if (res.size == 1) return 0
-            for (i in 1 until res.size) res[i].parent = res[i-1]
-            return getDistance()
-        }
-
+        //The Dijkstra algorithm itself
         suspend fun dijkstra(time: Long) {
+            //List of constant vertexes
             val closed = mutableListOf<Vertex>(this)
             this.status = Status.CLOSED
+            //A buffer array to update the array of constant vertexes
             val buffer = ArrayList<Vertex>()
             while (greph.any{it.status != Status.CLOSED}) {
+                //iterates over the constant vertexes
                 for (vert in closed) {
+                    //finds new vertexes and optimises the old ones
                     vert.setWageChildren()
                 }
                 for (vert in closed) {
+                    //chooses the most optimal vertex to make it constant
                     val debug = greph.filter { it.status == Status.PASSED }.minBy { it.getDistance() }
-                    //println((debug?.num))
                     val edge = getConnections().find { it.inter == debug?.parent && it.outer == debug}
                     edge?.status = Status.CLOSED
                     if (edge != null) edgesFin += edge
                     debug?.status = Status.CLOSED
                     if (debug == null) continue
+                    //Buffer for updating an array of constant vertexes
                     buffer.add(debug)
                     delay(time)
                 }
@@ -103,13 +108,17 @@ class Graph(context: Context): View(context) {
         }
 
 
-
+        //The function for locating the most optimal routes on every step of the algorithm
         private fun setWageChildren() {
             for (i in this.neighbours.indices) {
                 //println(neighbours)
                 if (neighbours[i] == 0) continue
                 val vertex = findByNum(i)
+
+                //checks whether it is constant
                 if (vertex.status == Status.CLOSED) continue
+
+                //checks whether it is new
                 if (vertex.parent == null) {
                     vertex.parent = this
                     vertex.status = Status.PASSED
@@ -118,14 +127,22 @@ class Graph(context: Context): View(context) {
                     edge?.status = Status.PASSED
                     if (edge != null) edgesFin += edge
                 }
+                //checks whether the route to this vertex is optimal
+                //if not, changes it to more optimal
                 else if (vertex.getDistance() > getDistance() + wages[i]) {
                     vertex.parent = this
                     edgesFin = (edgesFin.minus( edgesFin.find{ it.outer == vertex })?: edgesFin) as List<Edge>
                     edgesFin = (edgesFin.plus( edgesFin.find{ it.outer == vertex }).filterNotNull())
-                    //println("Rearranging ${vertex.num} ${vertex.parent?.num}, ${vertex.getDistance()}")
                 }
             }
         }
+
+
+
+
+        //End of 6th Lab assignment
+
+
 
         suspend fun startBFS() {
             var k = 1
