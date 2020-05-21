@@ -170,9 +170,8 @@ data class MyMatrix (val width: Int) {
             for (i in second.skeleton.indices){
                 if (second[counting, i] == 1) copy += elem.plusElement(i).toMutableList()
             }
-
         }
-        return copy.filterNot { it[0]==it[1] && it[1]==it[2] }.toMutableList()
+        return copy.filterNot { it[0]==it[1] || it[1]==it[2] }.toMutableList()
     }
     fun findPath3(): MutableList<MutableList<Int>> {
         val result = findPath2()
@@ -185,7 +184,7 @@ data class MyMatrix (val width: Int) {
             }
 
         }
-        return copy.filterNot { it[0]==it[1] && it[1]==it[2] }.toMutableList()
+        return copy.filterNot { it[0]==it[1] || it[1]==it[2] || it[2] == it[3] }.toMutableList()
     }
 
 

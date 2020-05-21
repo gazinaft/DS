@@ -91,6 +91,13 @@ class MatrixActivity : AppCompatActivity() {
         val showing = Toast.makeText(this, text, Toast.LENGTH_LONG)
         showing.show()
     }
+
+    fun showRoutes3(view: View) {
+        val routes3 = MyMatrix.generateMatrix(9304, 10).findPath3()
+        val text = """$routes3"""
+        val showing = Toast.makeText(this, text, Toast.LENGTH_LONG)
+        showing.show()
+    }
 //    fun showEdges(view: View) {
 //        val a = graph.getConnections()
 //        val textView = findViewById<TextView>(R.id.degreeTextView)

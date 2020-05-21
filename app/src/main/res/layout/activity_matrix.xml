@@ -6,6 +6,17 @@
     android:layout_height="match_parent"
     tools:context=".MatrixActivity">
 
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="showRoutes3"
+        android:text="Шлях 3"
+        app:layout_constraintBottom_toBottomOf="@+id/button3"
+        app:layout_constraintStart_toEndOf="@+id/button3"
+        app:layout_constraintTop_toTopOf="@+id/button3"
+        app:layout_constraintVertical_bias="0.0" />
+
     <TextView
         android:id="@+id/matrixTextView"
         android:layout_width="wrap_content"
@@ -14,8 +25,10 @@
         android:text="TextView"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.379" />
 
     <TextView
         android:id="@+id/numetationView"
@@ -35,7 +48,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.773" />
+        app:layout_constraintVertical_bias="0.703" />
 
     <Button
         android:id="@+id/button2"
@@ -55,9 +68,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="showRoutes2"
-        android:text="Шляхи 2 і 3 "
+        android:text="Шлях 2 "
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.393"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button" />
 
