@@ -14,7 +14,6 @@ class CondGraph(context: Context): View(context)  {
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
         val p = Paint()
-        p.color = Color.LTGRAY
         p.style = Paint.Style.FILL
         val con = Paint()
         con.style = Paint.Style.STROKE
@@ -22,12 +21,13 @@ class CondGraph(context: Context): View(context)  {
         con.color = Color.BLACK
         con.textSize = 23f
         val vertexes = generateCGraph(MyMatrix.generateMatrix(9304, 10))
-
+        p.color = Color.LTGRAY
         for (vert in vertexes.indices){
             if (vert + 1 < vertexes.size)
-                canvas?.drawLine(vertexes[vert].coords.first, vertexes[vert].coords.second,vertexes[vert+1].coords.first, vertexes[vert+1].coords.second, con)
-            canvas?.drawCircle(vertexes[vert].coords.first, vertexes[vert].coords.second, 150F, p)
-            canvas?.drawText(vertexes[vert].caption, vertexes[vert].coords.first-125f, vertexes[vert].coords.second, con)
+                interconnect(vertexes[vert].coords.first to vertexes[vert].coords.second,
+                    vertexes[vert+1].coords.first to vertexes[vert+1].coords.second, canvas, con)
+            canvas?.drawCircle(vertexes[vert].coords.first, vertexes[vert].coords.second, 50F, p)
+            canvas?.drawText(vertexes[vert].caption, vertexes[vert].coords.first-30f, vertexes[vert].coords.second, con)
         }
     }
     companion object {
@@ -40,6 +40,9 @@ class CondGraph(context: Context): View(context)  {
             val comps = matrix.strongComponents
             val verts = mutableListOf<CVertex>()
             if (comps.size == 1) return mutableListOf(CVertex(comps.first().map { x-> x+1 }.toString(), 360f to 560f))
+            if (comps.size == 2) return mutableListOf(CVertex(comps.first().map { x -> x+1 }.toString(), 360f to 300f),
+                CVertex(comps[1].map { x -> x+1 }.toString(), 360f to 700f)
+            )
             for (c in comps.indices){
                 verts[c] = CVertex(comps[c].toString(), generatePoints(comps.size)[c])
             }

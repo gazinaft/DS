@@ -69,9 +69,23 @@ class MatrixActivity : AppCompatActivity() {
         myToast.show()
     }
 
+    fun showMatrixes2(view: View){
+        val matrix = MyMatrix.generateMatrix(9304, 10)
+        val myToast = Toast.makeText(this,
+            """Матриця досяжності:
+            |${matrix.transClosure()}
+            |Матриця зв'язності:
+            |${matrix.strongConnect}
+            |
+            |Компоненти сильної зв'язності
+            |${matrix.strongComponents.map { list -> list.map { it+1 } }}
+        """.trimMargin(), Toast.LENGTH_LONG)
+        myToast.show()
+    }
+
     fun showRoutes2(view: View) {
-        val routes3 = MyMatrix.generateMatrix(9304, 10).findPath3()
-        val text = """Довжина3:
+        val routes3 = MyMatrix.generateMatrix(9304, 10).findPath2()
+        val text = """Довжина2:
             | $routes3
             """.trimMargin()
         val showing = Toast.makeText(this, text, Toast.LENGTH_LONG)
@@ -83,4 +97,5 @@ class MatrixActivity : AppCompatActivity() {
 //        textView.text = a.toString()
 //        matrixTextView.text
 //    }
+
 }

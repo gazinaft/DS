@@ -24,9 +24,9 @@ class MainActivity : AppCompatActivity() {
 
         graphMain.setSymmetricity(true)
         greph = graphMain.degrees
-//        graphMain.setOnClickListener { goToText(graphMain) }
+        graphMain.setOnClickListener { goToText(graphMain) }
 //        graphMain.setOnClickListener { karasskal(graphMain) }
-        graphMain.setOnClickListener { sixthLab(graphMain) }
+//        graphMain.setOnClickListener { sixthLab(graphMain) }
         setContentView(graphMain)
     }
     fun goToText(view: View) {

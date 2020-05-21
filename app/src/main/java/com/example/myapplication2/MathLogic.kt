@@ -144,7 +144,7 @@ fun drawFinal(p: Paint, p1: Pair<Float, Float>, p2: Pair<Float, Float>, canvas: 
     val (kL, bL) = convertToKX(p1, p2)
     val midPoint =  closestPoint(p1, cirleCollision(kL, bL, x2, y2, radius)) ?: return
     canvas?.drawLine(x1, y1, midPoint.first, midPoint.second, p)
-    //drawArrow(p, canvas, p1, midPoint)
+    drawArrow(p, canvas, p1, midPoint)
 }
 
 fun plainAncor(p1: Pair<Float, Float>, p2: Pair<Float, Float>): Pair<Float, Float>? {

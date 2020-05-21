@@ -1,9 +1,7 @@
 package com.example.myapplication2
 
 import android.os.Bundle
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.coroutines.runBlocking
 
 class CondGraphActivity : AppCompatActivity() {
 
@@ -13,13 +11,13 @@ class CondGraphActivity : AppCompatActivity() {
         val graph = Graph(this)
         graph.generateGraph(MyMatrix.generateMatrix())
         graph.setSymmetricity(true)
-        runBlocking {
-            graph.greph[0].dijkstra(0L)
-        }
+//        runBlocking {
+//            graph.greph[0].dijkstra(0L)
+//        }
 
         //val matrix = MyMatrix.generateWages()
         //val minWage = graph.minWage
-        //setContentView(CondGraph(this))
+        setContentView(CondGraph(this))
         //val routes2 = MyMatrix.generateMatrix(9304, 10).findPath2()
         //val routes3 = MyMatrix.generateMatrix(9304, 10).findPath3()
         val routes = graph.greph.map { it.calculatePath() }
@@ -33,8 +31,8 @@ class CondGraphActivity : AppCompatActivity() {
         sb.append('\n')
         sb.append('\n')
         sb.append(MyMatrix.generateWages())
-        val textView = findViewById<TextView>(R.id.goodText)
-        textView.text = sb.toString()
+        //val textView = findViewById<TextView>(R.id.goodText)
+//        textView.text = sb.toString()
 //        val texts = """Довжина2:
 //            | $routes2
 //            | Довжина 3:

@@ -131,7 +131,7 @@ class Graph(context: Context): View(context) {
                 //if not, changes it to more optimal
                 else if (vertex.getDistance() > getDistance() + wages[i]) {
                     vertex.parent = this
-                    edgesFin = (edgesFin.minus( edgesFin.find{ it.outer == vertex })?: edgesFin) as List<Edge>
+                    edgesFin = (edgesFin.minus( edgesFin.find{ it.outer == vertex })) as List<Edge>
                     edgesFin = (edgesFin.plus( edgesFin.find{ it.outer == vertex }).filterNotNull())
                 }
             }
@@ -360,21 +360,21 @@ class Graph(context: Context): View(context) {
 //        drawPoints(greph, 50f, canvas, p, getConnections())
 
 
-        for (i in getConnections()) {
-            //interconnect(i.inter.coordinates, i.outer.coordinates, canvas, p.apply { strokeWidth = 7f; color = Color.RED }, p.apply { strokeWidth = 7f; color = Color.RED })
-            val point1 = i.inter.coordinates
-            val point2 = i.outer.coordinates
-            val (xc, yc) = plainAncor(point1, point2) ?: 0f to 0f
-            if (!collide(point1, point2, points)) {
-                //canvas?.drawCircle(xc, yc, RADIUS, p.apply { color = Color.rgb(255, 140, 0) })
-                canvas?.drawText(i.length.toString(), xc - 3f, yc + 2f, p.apply { color = Color.RED })
-            }
-            else {
-                val midDot = makeAnchorPoint(point1, point2)
-//                canvas?.drawCircle(midDot.first, midDot.second, RADIUS, p.apply { color = Color.rgb(255, 140, 0) })
-                canvas?.drawText(i.length.toString(), midDot.first - 3f, midDot.second + 2f, p.apply { color = Color.RED })
-            }
-        }
+//        for (i in getConnections()) {
+//            //interconnect(i.inter.coordinates, i.outer.coordinates, canvas, p.apply { strokeWidth = 7f; color = Color.RED }, p.apply { strokeWidth = 7f; color = Color.RED })
+//            val point1 = i.inter.coordinates
+//            val point2 = i.outer.coordinates
+//            val (xc, yc) = plainAncor(point1, point2) ?: 0f to 0f
+//            if (!collide(point1, point2, points)) {
+//                //canvas?.drawCircle(xc, yc, RADIUS, p.apply { color = Color.rgb(255, 140, 0) })
+//                canvas?.drawText(i.length.toString(), xc - 3f, yc + 2f, p.apply { color = Color.RED })
+//            }
+//            else {
+//                val midDot = makeAnchorPoint(point1, point2)
+////                canvas?.drawCircle(midDot.first, midDot.second, RADIUS, p.apply { color = Color.rgb(255, 140, 0) })
+//                canvas?.drawText(i.length.toString(), midDot.first - 3f, midDot.second + 2f, p.apply { color = Color.RED })
+//            }
+//        }
         drawPoints(greph, 50f, canvas, p, getConnections())
 
 

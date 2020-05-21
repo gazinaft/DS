@@ -136,7 +136,20 @@ data class MyMatrix (val width: Int) {
     }
 
     fun countStrComps(): List<List<Int>> {
-        return this.strongConnect.skeleton.map { nonZeroIndexes(it) }.distinct()
+        val finalium =  this.strongConnect.skeleton.map { nonZeroIndexes(it) }.distinct().toMutableList()
+        if (finalium.all { it.isNotEmpty() }) return finalium
+        val emptys = finalium.count { it.isEmpty() }
+        val dist = (this.skeleton.indices.toList() - finalium.filter { it.isNotEmpty() }.flatten())
+        println(dist)
+        for (i in dist.indices) {
+            for (j in finalium.indices) {
+                if (finalium[j].isEmpty()) {
+                    finalium[j] = listOf(dist[i])
+                    break
+                }
+            }
+        }
+        return finalium
     }
 
     fun findPath1(): MutableList<MutableList<Int>> {
@@ -182,7 +195,7 @@ data class MyMatrix (val width: Int) {
             val rand = Random(seed)
             for (i in 0 until width) {
                 for (j in 0 until width) {
-                    res[i, j] = kotlin.math.floor(rand.nextDouble(2.0)*(1.0 - N3*0.01 - N4*0.005 - 0.05)).toInt()
+                    res[i, j] = kotlin.math.floor(rand.nextDouble(2.0)*(1.0 - N3*0.05 - N4*0.005 - 0.27)).toInt()
                 }
             }
             return res
