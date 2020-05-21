@@ -351,7 +351,7 @@ class Graph(context: Context): View(context) {
 
 //        val graphs = if (!isSym) generateGraph(symmetricMatrix.unOriented()) else greph
 //        connect(graphs)
-        connect2(symmetricMatrix.unOriented())
+        connect2(MyMatrix.generateMatrix())
 //        for ((x, y) in points){
 //            val i = points.indexOf(x to y)
 //            canvas?.drawCircle(x, y, 50F, p)

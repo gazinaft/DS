@@ -19,7 +19,7 @@ class MatrixActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_matrix)
         graph = Graph(this)
-
+        graph.setSymmetricity(false)
         verts = graph.generateGraph(MyMatrix.generateMatrix(9304, 10))
         //degreeTextView.setOnClickListener { nextTick(degreeTextView) }
     }
@@ -40,6 +40,13 @@ class MatrixActivity : AppCompatActivity() {
     fun show6(view: View) {
         val g = graph
     }
+
+    fun getDegrees(view: View) {
+        val degrees = graph.degrees
+        val myToast = Toast.makeText(this, degrees, Toast.LENGTH_LONG)
+        myToast.show()
+    }
+
 //    fun nextTick(view: View){
 //        if (counter == 10) {
 //            counter = 0

@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-        graphMain.setSymmetricity(true)
+        graphMain.setSymmetricity(false)
         greph = graphMain.degrees
         graphMain.setOnClickListener { goToText(graphMain) }
 //        graphMain.setOnClickListener { karasskal(graphMain) }
